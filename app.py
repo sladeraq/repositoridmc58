@@ -5,56 +5,76 @@ st.title("Mi primera aplicación en python")
 st.sidebar.title("Parámetros")
 
 
-from flask import Flask, request
+# app.py
+# Servidor web simple usando solo librerías nativas de Python
 
-app = Flask(__name__)
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from urllib.parse import parse_qs
 
-# Página principal
-@app.route('/')
-def formulario():
-    return '''
-    <html>
+HOST = "localhost"
+PORT = 8080
+
+class MiServidor(BaseHTTPRequestHandler):
+
+    def do_GET(self):
+        # Página con formulario
+        html = """
+        <html>
         <head>
             <title>Login</title>
         </head>
         <body>
-            <h2>Ingreso de Usuario</h2>
+            <h2>Ingreso</h2>
 
-            <form action="/mostrar" method="post">
-                <label>Usuario:</label><br>
+            <form method="POST">
+                Usuario:<br>
                 <input type="text" name="usuario"><br><br>
 
-                <label>Clave:</label><br>
+                Contraseña:<br>
                 <input type="password" name="clave"><br><br>
 
-                <button type="submit">Ingresar</button>
+                <input type="submit" value="Enviar">
             </form>
         </body>
-    </html>
-    '''
+        </html>
+        """
 
-# Mostrar datos ingresados
-@app.route('/mostrar', methods=['POST'])
-def mostrar():
-    usuario = request.form['usuario']
-    clave = request.form['clave']
+        self.send_response(200)
+        self.send_header("Content-type", "text/html")
+        self.end_headers()
+        self.wfile.write(html.encode())
 
-    return f'''
-    <html>
+    def do_POST(self):
+        # Leer datos enviados
+        longitud = int(self.headers['Content-Length'])
+        datos = self.rfile.read(longitud).decode()
+
+        parametros = parse_qs(datos)
+
+        usuario = parametros.get("usuario", [""])[0]
+        clave = parametros.get("clave", [""])[0]
+
+        respuesta = f"""
+        <html>
         <head>
-            <title>Datos Ingresados</title>
+            <title>Datos recibidos</title>
         </head>
         <body>
-            <h2>Datos recibidos</h2>
+            <h2>Datos ingresados</h2>
 
-            <p><b>Usuario:</b> {usuario}</p>
-            <p><b>Clave:</b> {clave}</p>
-
-            <br>
-            <a href="/">Volver</a>
+            Usuario: {usuario}<br>
+            Contraseña: {clave}
         </body>
-    </html>
-    '''
+        </html>
+        """
 
-if __name__ == '__main__':
-    app.run(debug=True)
+        self.send_response(200)
+        self.send_header("Content-type", "text/html")
+        self.end_headers()
+        self.wfile.write(respuesta.encode())
+
+# Iniciar servidor
+print(f"Servidor iniciado en http://{HOST}:{PORT}")
+
+servidor = HTTPServer((HOST, PORT), MiServidor)
+servidor.serve_forever()
