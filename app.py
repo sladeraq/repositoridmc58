@@ -4,50 +4,57 @@ st.title("Mi primera aplicación en python")
 
 st.sidebar.title("Parámetros")
 
-# Programa simple con interfaz gráfica usando Tkinter
-# Pide usuario y clave, y al presionar el botón muestra los datos ingresados
 
-import tkinter as tk
-from tkinter import messagebox
+from flask import Flask, request
 
-# Función que se ejecuta al presionar el botón
-def mostrar_datos():
-    usuario = entry_usuario.get()
-    clave = entry_clave.get()
+app = Flask(__name__)
 
-    messagebox.showinfo(
-        "Datos ingresados",
-        f"Usuario: {usuario}\nClave: {clave}"
-    )
+# Página principal
+@app.route('/')
+def formulario():
+    return '''
+    <html>
+        <head>
+            <title>Login</title>
+        </head>
+        <body>
+            <h2>Ingreso de Usuario</h2>
 
-# Crear ventana principal
-ventana = tk.Tk()
-ventana.title("Login Web")
-ventana.geometry("300x200")
+            <form action="/mostrar" method="post">
+                <label>Usuario:</label><br>
+                <input type="text" name="usuario"><br><br>
 
-# Etiqueta Usuario
-label_usuario = tk.Label(ventana, text="Usuario:")
-label_usuario.pack(pady=5)
+                <label>Clave:</label><br>
+                <input type="password" name="clave"><br><br>
 
-# Caja de texto Usuario
-entry_usuario = tk.Entry(ventana)
-entry_usuario.pack(pady=5)
+                <button type="submit">Ingresar</button>
+            </form>
+        </body>
+    </html>
+    '''
 
-# Etiqueta Clave
-label_clave = tk.Label(ventana, text="Clave:")
-label_clave.pack(pady=5)
+# Mostrar datos ingresados
+@app.route('/mostrar', methods=['POST'])
+def mostrar():
+    usuario = request.form['usuario']
+    clave = request.form['clave']
 
-# Caja de texto Clave (oculta caracteres)
-entry_clave = tk.Entry(ventana, show="*")
-entry_clave.pack(pady=5)
+    return f'''
+    <html>
+        <head>
+            <title>Datos Ingresados</title>
+        </head>
+        <body>
+            <h2>Datos recibidos</h2>
 
-# Botón
-boton = tk.Button(
-    ventana,
-    text="Ingresar",
-    command=mostrar_datos
-)
-boton.pack(pady=15)
+            <p><b>Usuario:</b> {usuario}</p>
+            <p><b>Clave:</b> {clave}</p>
 
-# Ejecutar ventana
-ventana.mainloop()
+            <br>
+            <a href="/">Volver</a>
+        </body>
+    </html>
+    '''
+
+if __name__ == '__main__':
+    app.run(debug=True)
