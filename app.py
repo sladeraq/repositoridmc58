@@ -4,7 +4,6 @@ st.title("Mi primera aplicación en python")
 
 st.sidebar.title("Parámetros")
 
-st.write("Elaborado por: Carlos Carrillo")
 # Programa simple con interfaz gráfica usando Tkinter
 # Pide usuario y clave, y al presionar el botón muestra los datos ingresados
 
