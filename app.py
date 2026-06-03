@@ -59,7 +59,12 @@ elif sesion == "Sesión 5":
       datos = pd.read_csv(archivo)
     elif archivo.name.endswith(".xlsx"):
       datos = pd.read_excel(archivo)
+    
+    st.write(datos)
 
+    st.write(datos.info())
+    st.write(datos.describe())
+    
     lista_columnas_numericas = datos.select_dtypes(include="number").columns.tolist()
     lista_columnas_categoricas = datos.select_dtypes(include="object").columns.tolist()
 
@@ -71,8 +76,6 @@ elif sesion == "Sesión 5":
 
     st.write(fig)
     
-    st.write(datos)
-
-  
+      
   else: 
     st.write("Cargue el archivo ")
