@@ -60,7 +60,19 @@ elif sesion == "Sesión 5":
     elif archivo.name.endswith(".xlsx"):
       datos = pd.read_excel(archivo)
 
+    lista_columnas_numericas = datos.select_dtypes(include="number").columns.tolist()
+    lista_columnas_categoricas = datos.select_dtypes(include="object").columns.tolist()
+
+    ejex = st.selectbox("Seleccione el eje x", lista_columnas_numericas)
+    ejey = st.selectbox("Seleccione el eje y", lista_columnas_numericas)
+    color =  st.selectbox("Seleccione la categoria", lista_columnas_categoricas)
+
+    fig = px.scatter(datos, x = ejex, y = ejey, color = color)
+
+    st.write(fig)
+    
     st.write(datos)
 
+  
   else: 
     st.write("Cargue el archivo ")
