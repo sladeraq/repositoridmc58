@@ -2,7 +2,7 @@ import streamlit as st
 import numpy as np
 import libreria_funciones as lf
 import pandas as pd
-import plotly.express as py
+import plotly.express as px
 
 st.title("Mi primera aplicación en python")
 
